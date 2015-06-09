@@ -4,6 +4,14 @@ var passport = module.parent.exports.passport;
 var Employees = require('../models/employees.js');
 var Admins = require('../models/admins.js');
 
+var adminAuth = function(req, res, next){
+    if(typeof req.user != "undefined"){
+        next();
+    }else{
+        res.redirect('/panel');
+    }
+}
+
 app.get('/admin',function(req,res){ // /admin para Login
 	res.render('login',{ title: 'Login'});
 });
@@ -14,7 +22,7 @@ app.post('/admin', passport.authenticate('AdminLogin',
       failureFlash: true }));
 
 
-app.get('/panel', function(req,res){
+app.get('/panel', adminAuth, function(req,res){
 	//res.end('Funciona');
 	//var msg = req.flash('message'); //flash message
 	Employees.find({},function(err,docs){
@@ -24,7 +32,7 @@ app.get('/panel', function(req,res){
 	});
 });
 
-app.get('/employees/new', function(req,res){
+app.get('/employees/new', adminAuth,function(req,res){
 	//req.flash('message', 'You visited /new'); //flash message
 	res.render('new', { title: 'New employee'});
 });
@@ -41,7 +49,7 @@ app.get('/employees/new', function(req,res){
     });
  });
 
-app.get('/employees/delete/:id', function(req, res){
+app.get('/employees/delete/:id', adminAuth, function(req, res){
     Employees.remove({ _id: req.params.id }, function(err, doc){
         if(!err){
             res.redirect('/panel');
@@ -51,7 +59,7 @@ app.get('/employees/delete/:id', function(req, res){
     });
 });
 
-app.get('/employees/edit/:id', function(req, res){
+app.get('/employees/edit/:id', adminAuth, function(req, res){
     Employees.findOne({ _id: req.params.id }, function(err, doc){
         if(!err){
             res.render('edit', { title: 'Edit Employee', employee: doc});
