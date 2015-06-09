@@ -4,6 +4,7 @@ var passport = module.parent.exports.passport;
 var Employees = require('../models/employees.js');
 var Admins = require('../models/admins.js');
 
+
 var adminAuth = function(req, res, next){
     if(typeof req.user != "undefined"){
         next();
@@ -23,17 +24,16 @@ app.post('/admin', passport.authenticate('AdminLogin',
 
 
 app.get('/panel', adminAuth, function(req,res){
-	//res.end('Funciona');
-	//var msg = req.flash('message'); //flash message
+	var msg = req.flash('message'); //flash message
 	Employees.find({},function(err,docs){
 		//res.json(docs);
-		res.render('list', { title: 'Employee Panel', employees: docs}); //el list es el list.jade q esta en el directorio view
-		//res.render('list', { title: 'Employee Panel', persons: docs, flashmsg: msg}); //flash message
+		//res.render('list', { title: 'Employee Panel', employees: docs}); //el list es el list.jade q esta en el directorio view
+		res.render('list', { title: 'Employee Panel', employees: docs, flashmsg: msg}); //flash message
 	});
 });
 
 app.get('/employees/new', adminAuth,function(req,res){
-	//req.flash('message', 'You visited /new'); //flash message
+	req.flash('message', 'An employee was added succesfully');
 	res.render('new', { title: 'New employee'});
 });
 
@@ -52,6 +52,7 @@ app.get('/employees/new', adminAuth,function(req,res){
 app.get('/employees/delete/:id', adminAuth, function(req, res){
     Employees.remove({ _id: req.params.id }, function(err, doc){
         if(!err){
+            req.flash('message', 'An employee was deleted succesfully');
             res.redirect('/panel');
         } else {
             res.end(err);    
@@ -62,6 +63,7 @@ app.get('/employees/delete/:id', adminAuth, function(req, res){
 app.get('/employees/edit/:id', adminAuth, function(req, res){
     Employees.findOne({ _id: req.params.id }, function(err, doc){
         if(!err){
+            req.flash('message', 'An employee was modified succesfully');
             res.render('edit', { title: 'Edit Employee', employee: doc});
         } else {
             res.end(err);    

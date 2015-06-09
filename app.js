@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = exports.passport = require('passport');
 //--------------flash message--------------------
-//var session = require('express-session')
-//var flash = require('connect-flash');
+var session = require('express-session')
+var flash = require('connect-flash');
 //-----------------------------------------------
 var routes = require('./routes/index');
 var users = require('./routes/user');
@@ -38,10 +38,10 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 //---------------
-//app.use(session({secret: 'supersecret', saveUninitialized: true, resave: true})); //flash message
+app.use(session({secret: 'supersecret', saveUninitialized: true, resave: true})); //flash message
 app.use(passport.initialize());
 app.use(passport.session());
-//app.use(flash()); //flash message
+app.use(flash()); //flash message
 require('./auth/local-strategy.js');
 //---------------
 
