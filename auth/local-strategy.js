@@ -1,6 +1,6 @@
 var passport = module.parent.exports.passport,
   LocalStrategy = require('passport-local').Strategy,
-  Employees = require('../models/employees.js');
+  Admins = require('../models/admins.js');
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -16,7 +16,7 @@ passport.use('AdminLogin', new LocalStrategy(
     passwordField: 'password'
   },
   function(username, password, done) {
-    Employees.findOne({ email:username }, function(err, adm) {
+    Admins.findOne({ email:username }, function(err, adm) {
       if (err) { return done(err); }
       if (!adm) {
         return done(null, false, { message: 'Incorrect username.' });
@@ -28,4 +28,3 @@ passport.use('AdminLogin', new LocalStrategy(
     });
   }
 ));
-
