@@ -9,9 +9,14 @@ var adminAuth = function(req, res, next){
     if(typeof req.user != "undefined"){
         next();
     }else{
-        res.redirect('/panel');
+        res.redirect('/admin');
     }
 }
+
+app.use(function(req, res, next) {
+    res.locals.user = req.user;
+    next();
+});
 
 app.get('/admin',function(req,res){ // /admin para Login
 	res.render('login',{ title: 'Login'});
@@ -22,6 +27,10 @@ app.post('/admin', passport.authenticate('AdminLogin',
       failureRedirect: '/admin',
       failureFlash: true }));
 
+app.get('/logout', function(req, res){
+    req.logout();
+    res.redirect('/admin');
+});
 
 app.get('/panel', adminAuth, function(req,res){
 	var msg = req.flash('message'); //flash message
